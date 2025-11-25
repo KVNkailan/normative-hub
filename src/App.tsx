@@ -35,7 +35,7 @@ export default function App() {
   useEffect(() => {
   async function loadRealData() {
     try {
-      const res = await fetch('https://gray-mushroom-0aa371a03.3.azurestaticapps.net')
+      const res = await fetch('https://orange-island-0fbb3f803.3.azurestaticapps.net')
       const realProjects = await res.json()
 
       // Mapeia coordenadas (podes melhorar depois com geocoding)
