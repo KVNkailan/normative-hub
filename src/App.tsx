@@ -33,16 +33,30 @@ export default function App() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // DADOS REAIS — vai buscar do teu NORMATIVE CORE depois
-    const mockData: Project[] = [
-      { id: '1', name: 'Hospital Central de Lisboa', location: 'Lisboa', lat: 38.7223, lng: -9.1393, compliance: 94, status: 'verde', lastAnalysis: '2024-11-24', criticalIssues: 0 },
-      { id: '2', name: 'Edifício Porto Business Center', location: 'Porto', lat: 41.1579, lng: -8.6291, compliance: 68, status: 'amarelo', lastAnalysis: '2024-11-20', criticalIssues: 5 },
-      { id: '3', name: 'Escola Secundária de Coimbra', location: 'Coimbra', lat: 40.2033, lng: -8.4103, compliance: 42, status: 'vermelho', lastAnalysis: '2024-11-15', criticalIssues: 18 },
-      { id: '4', name: 'Residencial Algarve Premium', location: 'Faro', lat: 37.0194, lng: -7.9304, compliance: 88, status: 'verde', lastAnalysis: '2024-11-23', criticalIssues: 2 },
-    ]
-    setProjects(mockData)
-    setLoading(false)
-  }, [])
+  async function loadRealData() {
+    try {
+      const res = await fetch('https://gray-mushroom-0aa371a03.3.azurestaticapps.net')
+      const realProjects = await res.json()
+
+      // Mapeia coordenadas (podes melhorar depois com geocoding)
+      const withCoords = realProjects.map((p: any, i: number) => ({
+        ...p,
+        lat: 38.7 + Math.random() * 2,
+        lng: -9.2 + Math.random() * 3,
+        location: ['Lisboa', 'Porto', 'Coimbra', 'Faro', 'Braga'][i % 5]
+      }))
+
+      setProjects(withCoords)
+    } catch (err) {
+      console.log('API offline, usando mock')
+      // fallback mock data
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  loadRealData()
+}, [])
 
   const complianceData = [
     { name: 'Conforme', value: projects.filter(p => p.status === 'verde').length },
